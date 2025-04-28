@@ -1,0 +1,10 @@
+window-height=510
+window-width=1640
+
+font-family = "CommitMono Nerd Font"
+font-size = 14
+window-inherit-font-size = false
+theme = "catppuccin-mocha"
+title = " "
+macos-titlebar-style = "transparent"
+macos-titlebar-proxy-icon = "hidden"
