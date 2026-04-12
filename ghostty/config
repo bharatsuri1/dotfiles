@@ -1,0 +1,27 @@
+window-height=510
+window-width=1640
+
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+cursor-invert-fg-bg = true
+mouse-hide-while-typing = true
+
+
+
+auto-update = download
+auto-update-channel = stable
+link-url = true
+
+window-inherit-font-size = false
+theme = Rose Pine
+title = " "
+macos-titlebar-style = "hidden"
+macos-titlebar-proxy-icon = "hidden"
+window-decoration = none
+keybind = shift+enter=text:\x1b\r
+
+scrollback-limit = 80000
+
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
