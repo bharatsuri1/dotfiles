@@ -89,10 +89,10 @@ plugins=(
     zoxide
     web-search
     podman
-		zsh-vi-mode
 )
 
 source $ZSH/oh-my-zsh.sh
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 # User configuration
 
@@ -120,6 +120,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+export HOMEBREW_NO_ENV_HINTS=1
 export K9S_CONFIG_DIR="$HOME/.config/k9s"
 export LS_COLORS="$(vivid generate catppuccin-mocha)"
 export LOGDY_PORT=9893
@@ -139,7 +140,8 @@ alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset
 alias ls="eza --icons --group-directories-first"
 alias c="clear"
 alias cd="z"
-alias cs="cursor"
+alias cs="code"
+alias pd="podman"
 alias v="nvim"
 alias nv="nvim"
 alias vi="nvim"
@@ -153,6 +155,8 @@ alias cl="claude"
 
 . "$HOME/.local/bin/env"
 . "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
