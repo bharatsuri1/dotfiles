@@ -127,8 +127,10 @@ lz4
 lzo
 m4
 mbedtls@3
+merve
 mpdecimal
 mpg123
+nbytes
 ncurses
 neovim
 nettle
@@ -149,6 +151,7 @@ pango
 pcre2
 pinentry
 pixman
+pnpm
 podman
 podman-tui
 poppler
@@ -163,6 +166,7 @@ sdl2
 sevenzip
 shaderc
 simdjson
+simdutf
 snappy
 speedtest
 speex
@@ -198,5 +202,6 @@ yazi
 zeromq
 zimg
 zoxide
+zsh-vi-mode
 zstd
 font-symbols-only-nerd-font

@@ -140,7 +140,6 @@ alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset
 alias ls="eza --icons --group-directories-first"
 alias c="clear"
 alias cd="z"
-alias cs="code"
 alias pd="podman"
 alias v="nvim"
 alias nv="nvim"
@@ -152,6 +151,7 @@ alias ld="lazydocker"
 alias t="tmux attach -t default || tmux new -s default"
 alias tk="rm -rf ~/.local/share/tmux/resurrect/*; tmux kill-server"
 alias cl="claude"
+alias oc="opencode"
 
 . "$HOME/.local/bin/env"
 . "$HOME/.atuin/bin/env"
@@ -173,8 +173,12 @@ eval "$(direnv hook zsh)"
 
 export PATH="/opt/homebrew/bin:$HOME/bin:$HOME/.local/bin:$PATH"
 
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
+
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
