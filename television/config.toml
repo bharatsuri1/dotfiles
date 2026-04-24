@@ -115,6 +115,11 @@ sort_alphabetically = true
 # selection_bg = "#444444"
 # match_fg = "#ff0000"
 
+[ui.theme_overrides]
+selection_bg = "#3a3a5e"
+selection_fg = "#ffffff"
+match_fg     = "#ffaf5f"
+
 # Keybindings and Events
 # ----------------------------------------------------------------------------
 #
