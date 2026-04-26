@@ -59,19 +59,15 @@ preview_command = "bat --color=always ~/.config/sesh/sesh.toml"
 # per session (shell, claude, editor, git).
 # ---------------------------------------------------------------------------
 [[session]]
-name = "reasoner"
-path = "~/Code/Github/Runtime/service-agentic-reasoner"
-windows = ["claude", "editor", "git"]
-
-[[session]]
-name = "docker compose"
-path = "~/Code/Github/Tools/runtime-docker-compose"
-windows = ["claude", "editor", "git"]
-
-[[session]]
 name = "notes workspace"
-path = "~/Code/Github/Workspaces/notes-workspace"
+path = "~/work/notes"
 windows = ["claude", "editor", "git"]
+
+[[session]]
+name = "research workspace"
+path = "~/work/research"
+windows = ["claude", "editor"]
+
 
 # Reusable window layouts referenced above. Windows inherit the session's
 # path unless a `path` is specified here. startup_script runs via
