@@ -1,0 +1,89 @@
+# sesh — smart tmux session manager
+# Docs: https://github.com/joshmedeski/sesh
+# Schema: https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
+# Use last 2 path components for session names so
+# ~/Code/Github/Falcon/falcon-vault -> "Falcon/falcon-vault"
+# (disambiguates repos with similar basenames, e.g. falcon-workspace vs falcon-vault)
+dir_length = 2
+
+# Drop noisy / throwaway sessions from the picker.
+# Surface them on demand with `sesh list -b`.
+blacklist = ["scratch", "tmp", "0"]
+
+# Pick order: live tmux sessions first, then curated configs,
+# then zoxide's frecency list for everything else.
+sort_order = ["tmux", "config", "zoxide"]
+
+# ---------------------------------------------------------------------------
+# Built-in picker (used when you run `sesh connect` with no args)
+# ---------------------------------------------------------------------------
+[tui]
+prompt       = "⚡ "
+placeholder  = "Jump to a session…"
+show_icons   = true
+
+# ---------------------------------------------------------------------------
+# Defaults applied to every session
+# Lightweight: new sessions land in a plain shell at the session's CWD.
+# Heavy tooling (claude, editor, git) is opt-in via power-session entries below.
+# ---------------------------------------------------------------------------
+[default_session]
+preview_command = "eza -la --git --icons --color=always --group-directories-first {}"
+
+# ---------------------------------------------------------------------------
+# Curated config sessions — always show up in the picker (`sesh list -c`)
+# ---------------------------------------------------------------------------
+[[session]]
+name = "config"
+path = "~/.config"
+startup_command = "nvim"
+
+[[session]]
+name = "tmux config"
+path = "~/.config/tmux"
+startup_command = "nvim tmux.conf"
+preview_command = "bat --color=always ~/.config/tmux/tmux.conf"
+
+[[session]]
+name = "sesh config"
+path = "~/.config/sesh"
+startup_command = "nvim sesh.toml"
+preview_command = "bat --color=always ~/.config/sesh/sesh.toml"
+
+# ---------------------------------------------------------------------------
+# Power sessions — claude + editor + git, each in its own tmux window.
+# tmux always creates window 1 as a plain shell at the session's `path`
+# (since no `startup_command` is set here). Entries in `windows = [...]`
+# are then appended as windows 2, 3, 4, … in order. Net result: 4 windows
+# per session (shell, claude, editor, git).
+# ---------------------------------------------------------------------------
+[[session]]
+name = "reasoner"
+path = "~/Code/Github/Runtime/service-agentic-reasoner"
+windows = ["claude", "editor", "git"]
+
+[[session]]
+name = "docker compose"
+path = "~/Code/Github/Tools/runtime-docker-compose"
+windows = ["claude", "editor", "git"]
+
+[[session]]
+name = "notes workspace"
+path = "~/Code/Github/Workspaces/notes-workspace"
+windows = ["claude", "editor", "git"]
+
+# Reusable window layouts referenced above. Windows inherit the session's
+# path unless a `path` is specified here. startup_script runs via
+# `$SHELL -i -c`, same semantics as startup_command (not in shell history).
+[[window]]
+name = "claude"
+startup_script = "claude"
+
+[[window]]
+name = "editor"
+startup_script = "nvim"
+
+[[window]]
+name = "git"
+startup_script = "lazygit"

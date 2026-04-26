@@ -13,6 +13,8 @@ ca-certificates
 cairo
 certifi
 cjson
+coreutils
+cryptography
 dav1d
 direnv
 docker-completion
@@ -38,9 +40,13 @@ glow
 gmp
 gnupg
 gnutls
+gonzo
 gpgme
 gpgmepp
 graphite2
+graphviz
+gts
+gum
 harfbuzz
 hdrhistogram_c
 highway
@@ -50,6 +56,7 @@ httpie
 icu4c@78
 imagemagick-full
 imath
+jasper
 jbig2dec
 jless
 jpeg-turbo
@@ -64,6 +71,7 @@ leptonica
 libarchive
 libass
 libassuan
+libavif
 libb2
 libbluray
 libdatrie
@@ -87,6 +95,7 @@ libomp
 libplacebo
 libpng
 libraw
+librdkafka
 librist
 librsvg
 libsamplerate
@@ -163,8 +172,10 @@ resvg
 ripgrep
 rubberband
 sdl2
+sesh
 sevenzip
 shaderc
+shfmt
 simdjson
 simdutf
 snappy
@@ -186,12 +197,14 @@ unbound
 unibilium
 utf8proc
 uvwasi
+vault
 vivid
 vulkan-headers
 vulkan-loader
 webp
 wget
 whisper-cpp
+worktrunk
 x264
 x265
 xh
