@@ -1,76 +1,84 @@
-# Alacritty Terminal Config — matched to Ghostty setup
-
-[env]
-TERM = "xterm-256color"
+# Alacritty config matched to ../ghostty/config
+# Reference: https://alacritty.org/config-alacritty.html
 
 [general]
-# Set to your primary workspace
-# working_directory = "~/projects/code"
+import = ["themes/rose-pine.toml"]
 
-import = [
-  "~/.config/alacritty/rose-pine.toml"
-]
+live_config_reload = true
 
 [window]
+# Ghostty: maximize = true
 startup_mode = "Maximized"
 
-# Padding — Ghostty uses 0 by default, but padding is nice in Alacritty
-# since it has no tab bar or titlebar. Keep your 15x15 or set to 0 to match.
-padding.x = 15
-padding.y = 15
+# QoL: add breathing room and keep resize steps aligned to terminal cells.
+padding = { x = 8, y = 8 }
 dynamic_padding = true
+resize_increments = true
 
-decorations = "None"       # Matches Ghostty: window-decoration = none
-resize_increments = true   # Snap resize to cell boundaries for clean edges
-option_as_alt = "Both"     # Treat Option as Alt so M-* tmux bindings work (Ghostty does this by default)
-dynamic_title = false       # Matches Ghostty: title = " " (static blank title)
-title = " "                 # Matches Ghostty: title = " "
+# QoL: make macOS Option behave as terminal Alt/Meta.
+option_as_alt = "Both"
+
+# Disable native decorations to avoid macOS rounded corners.
+# Alacritty does not expose Ghostty's tab-style titlebar.
+decorations = "None"
+decorations_theme_variant = "Dark"
+
+# Keep the background opaque; no blur.
+opacity = 1.0
+blur = false
 
 [font]
+# Ghostty: font-family = "JetBrainsMono Nerd Font", font-size = 14
 normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
-bold = { style = "Bold" }
-italic = { style = "Italic" }
-bold_italic = { style = "Bold Italic" }
+bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
+bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
 size = 14.0
-offset = { x = 0, y = 1 }
+builtin_box_drawing = true
 
-[cursor]
-# Matches Ghostty: cursor-style = block, cursor-style-blink = false
-style.shape = "Block"
-style.blinking = "Off"
-
-blink_interval = 500
-blink_timeout = 0
-
-[mouse]
-# Matches Ghostty: mouse-hide-while-typing = true
-hide_when_typing = false
+[scrolling]
+# QoL: larger scrollback and faster wheel/trackpad scrolling.
+history = 50000
+multiplier = 5
 
 [selection]
+# QoL: selected text is copied directly to the clipboard.
 save_to_clipboard = true
 
+[cursor]
+# Ghostty: cursor-style = block, cursor-style-blink = false
+style = { shape = "Block", blinking = "Never" }
+unfocused_hollow = true
+thickness = 0.2
+
+[mouse]
+# Ghostty: mouse-hide-while-typing = true
+hide_when_typing = true
+# QoL: right-click paste.
+bindings = [
+  { mouse = "Right", action = "Paste" },
+]
+
+[hints]
+alphabet = "jfkdls;ahgurieowpq"
+
 [[hints.enabled]]
+# Ghostty: link-url = true
 command = "open"
 hyperlinks = true
 post_processing = true
 persist = false
-mouse.enabled = true
-binding = { key = "O", mods = "Command|Shift" }
-regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\s{-}\\^⟨⟩`\\\\]+"
+mouse = { enabled = true, mods = "Command" }
+binding = { key = "O", mods = "Control|Shift" }
+regex = '(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^[:space:]<>"{}|\\^`]+'
+
+[terminal]
+# QoL: allow OSC52 copy/paste integration for SSH/tmux workflows.
+# Alacritty has no direct equivalent for Ghostty's no-cursor/ssh-env/ssh-terminfo flags.
+osc52 = "CopyPaste"
 
 [keyboard]
+# Ghostty: keybind = shift+enter=text:\x1b\r
 bindings = [
-  { key = "Return", mods = "Shift", chars = "\u001b\r" },
-
-  # Font size
-  { key = "Plus", mods = "Command", action = "IncreaseFontSize" },
-  { key = "Minus", mods = "Command", action = "DecreaseFontSize" },
-  { key = "Key0", mods = "Command", action = "ResetFontSize" },
-
-  # Window management
-  { key = "N", mods = "Command|Shift", action = "CreateNewWindow" },
-  { key = "Return", mods = "Command", action = "ToggleSimpleFullscreen" },
-
-  # Search (essential for raw terminal usage without tmux)
-  { key = "F", mods = "Command", action = "SearchForward" },
+  { key = "Enter", mods = "Shift", chars = "\u001b\r" },
 ]
