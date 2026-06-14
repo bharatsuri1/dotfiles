@@ -9,7 +9,7 @@
     "sendAnonymousTelemetry": false,
     "confirmQuit": "dirty-only",
     "reorderOnNotification": false,
-    "keepWorkspaceOpenWhenClosingLastSurface": false,
+    "keepWorkspaceOpenWhenClosingLastSurface": true,
     "workspaceInheritWorkingDirectory": true,
     "commandPaletteSearchesAllSurfaces": true
   },
