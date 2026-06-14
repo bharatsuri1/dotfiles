@@ -1,8 +1,14 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-$directory$git_branch$git_status$git_metrics$jobs$direnv\
+$directory$git_branch$git_status$custom$jobs$direnv\
 $line_break$character """
+
+# Keep prompt latency bounded in very large repositories.
+# Git status/diff-style modules can walk large worktrees; keep the prompt to
+# cheap metadata by default and let Git itself handle deeper inspection.
+command_timeout = 500
+scan_timeout = 10
 
 palette = 'rose_pine'
 
@@ -58,8 +64,26 @@ style = "fg:iris"
 format = "  [●](fg:#6b9e94)  [$symbol $branch]($style)"
 
 [git_status]
+disabled = true
 style = "fg:subtext1"
 format = "[ ($all_status$ahead_behind )]($style)"
+
+[custom.git_modified]
+# Fast tracked-file modification marker for large repos.
+# Shows only when tracked files have unstaged modifications.
+# Icon options:         󰷉  󰏫  󱇧    󰈙
+when = "git diff --no-ext-diff --quiet --ignore-submodules --exit-code; test $? -eq 1"
+command = "printf ''"
+style = "fg:gold"
+format = "  [$output]($style)"
+
+[custom.git_stash]
+# Fast stash marker. Checks only whether refs/stash exists; does not enumerate entries.
+# Icon options:   󰆓    󰏗  󰜦    
+when = "git rev-parse --verify --quiet refs/stash >/dev/null"
+command = "printf ''"
+style = "fg:foam"
+format = "  [$output]($style)"
 
 
 [character]
@@ -88,7 +112,9 @@ loaded_msg = "env"
 unloaded_msg = ""
 
 [git_metrics]
-disabled = false
+# Disabled because it computes diff metrics, which is one of the easiest ways
+# for a prompt to become slow in large monorepos.
+disabled = true
 added_style = "fg:pine"
 deleted_style = "fg:love"
 only_nonzero_diffs = true
