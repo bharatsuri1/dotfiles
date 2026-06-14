@@ -43,7 +43,9 @@
   },
 
   "sidebarAppearance": {
-    "matchTerminalBackground": true
+    "matchTerminalBackground": false,
+    "darkModeTintColor": "#1f1d2e",
+    "tintOpacity": 0.08
   },
 
   "notifications": {
@@ -63,15 +65,16 @@
 
   "workspaceColors": {
     "indicatorStyle": "washRail",
-    "selectionColor": "#26233a",
+    "selectionColor": "#f6c177",
     "notificationBadgeColor": "#c4a7e7",
     "colors": {
-      "focus": "#31748f",
-      "build": "#9ccfd8",
-      "review": "#c4a7e7",
-      "ops": "#f6c177",
-      "learn": "#ea9d34",
-      "scratch": "#6e6a86"
+      "Love": "#eb6f92",
+      "Rose": "#ebbcba",
+      "Pine": "#31748f",
+      "Foam": "#9ccfd8",
+      "Iris": "#c4a7e7",
+      "Subtle": "#908caa",
+      "Muted": "#6e6a86"
     }
   },
 
