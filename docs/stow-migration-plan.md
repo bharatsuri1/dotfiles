@@ -76,7 +76,7 @@ during migration (use `stow --adopt` or a manual copy — see §6).
    `docs/stow-migration-plan.md`.
 4. **`brew/list.txt` and `raycast/extensions.md` are manifests**, not config files to
    symlink. Keep tracked, do **not** stow.
-5. **zsh plugins are external git clones** — never track them in this repo (see §13).
+5. **zsh plugins are external git clones** — never track them in this repo (see §14).
 6. **Backups littering `$HOME`**: `.zshrc.backup.20260613225527`, `.zshenv.backup.*`,
    `.zprofile.backup.*` — leftover from the earlier OMZ→tuned migration. Safe to delete
    after zsh is migrated and verified.
@@ -96,6 +96,9 @@ during migration (use `stow --adopt` or a manual copy — see §6).
 5. **Rollback is always `stow -D <pkg>`** plus restoring the adopted file. Keep backups until
    verified.
 6. **No symlinks committed.** The repo holds real files only; symlinks exist only in `$HOME`.
+7. **Local overrides are explicit and untracked.** Machine-specific paths, work-only settings,
+   secrets, and experimental tweaks live in `*.local` files that are sourced/included by the
+   tracked config. The tracked file owns the default behavior; local files own local variance.
 
 ---
 
@@ -164,7 +167,10 @@ different target per package (`-t ~/.config` for most, `-t ~` for zsh top-level,
    the live dir also contains unmanaged content (plugins, receipts). With folding, stow
    would try to replace the whole dir with one symlink and fail/refuse. Commit the `.stowrc`.
 3. **Confirm stow version** ≥ 2.4 (we have 2.4.1 — supports `--adopt`, `--no-folding`).
-4. **Back up `$HOME` dotfiles** being migrated for the session (a tarball is enough):
+4. **Refresh `.gitignore`** for dotfiles usage before migration. Keep `scratchpad/`, runtime
+   plugin dirs, `.DS_Store`, pi npm dependencies, and local override files ignored; remove the
+   stale GitHub Pages/Jekyll ignores unless this repo becomes a Pages site again.
+5. **Back up `$HOME` dotfiles** being migrated for the session (a tarball is enough):
    ```sh
    tar czf ~/dotfiles-pre-stow-backup-$(date +%Y%m%d).tgz \
      ~/.zshrc ~/.zshenv ~/.zprofile ~/.gitconfig ~/.config/zsh ~/.config/starship.toml
@@ -377,7 +383,7 @@ git push
 ### 9.6 Update `zsh/README.md`
 The README's "File Layout" already describes `~/.zshenv` / `~/.zprofile` / `~/.zshrc` as the
 startup files — after migration they are symlinks into the repo. Add a short "Installation"
-section noting `stow zsh` and the manual plugin-clone step (see §13).
+section noting `stow zsh` and the manual plugin-clone step (see §14).
 
 ---
 
@@ -452,7 +458,43 @@ state, swap).
 
 ---
 
-## 13. zsh plugins (external clones) — bootstrap documentation
+## 13. Local overrides (`*.local`) — machine-specific setup
+
+Industry-standard dotfiles repos keep the committed config portable and layer local-only
+settings through ignored override files. This avoids hard-coding work/personal machine paths,
+private aliases, credentials, experimental toggles, and host-specific behavior in Git.
+
+Recommended conventions for this repo:
+
+```txt
+~/.zshrc.local          # sourced by tracked ~/.zshrc if present
+~/.zprofile.local       # optional login-shell additions
+~/.zshenv.local         # only truly global environment; keep minimal
+~/.gitconfig.local      # included by tracked ~/.gitconfig if present
+~/.config/direnv/*.local.toml or .envrc.local  # per-project/local secrets, untracked
+```
+
+Tracked shell files should contain guarded includes, for example:
+
+```sh
+[ -r "$HOME/.zshenv.local" ] && source "$HOME/.zshenv.local"
+[ -r "$HOME/.zprofile.local" ] && source "$HOME/.zprofile.local"
+[ -r "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+```
+
+Tracked Git config should include local identity/credential overrides when present:
+
+```ini
+[include]
+  path = ~/.gitconfig.local
+```
+
+`*.local`, `*.local.*`, and `.envrc.local` should be ignored globally in this repo. If a local
+file becomes generally useful, promote it into the tracked config intentionally.
+
+---
+
+## 14. zsh plugins (external clones) — bootstrap documentation
 
 Not tracked, not stowed. Document the install in `zsh/README.md` so a fresh machine reproduces them:
 
@@ -472,7 +514,7 @@ future item.
 
 ---
 
-## 14. `.gitignore` changes
+## 15. `.gitignore` changes
 
 Current `.gitignore` is mostly Jekyll cruft (legacy from a GitHub Pages origin). Clean up and
 make it dotfiles-relevant:
@@ -486,6 +528,11 @@ scratchpad/
 
 # pi-agent workspace (partially tracked via .pi/settings.json; ignore the rest)
 .pi/npm/node_modules/
+
+# Local machine overrides / secrets
+*.local
+*.local.*
+.envrc.local
 
 # tmux plugins (TPM-managed)
 tmux/plugins/
@@ -503,7 +550,7 @@ Remove the stale Jekyll/Gemfile/Pages ignores unless we still use them (we don't
 
 ---
 
-## 15. Verification & rollback (per package)
+## 16. Verification & rollback (per package)
 
 ### Verify checklist (run after every `stow <pkg>`)
 1. `ls -l <target>` shows a symlink → `~/Code/personal/dotfiles/<pkg>/...`.
@@ -521,9 +568,10 @@ git revert <commit-sha>             # undo the repo change
 
 ---
 
-## 16. Commit & push cadence
+## 17. Commit & push cadence
 
-- **One commit per package** (occasionally one prep commit for a group of trivial ones).
+- **One commit per package** (occasionally one prep commit for a group of trivial repo hygiene,
+  such as `.stowrc`, `.gitignore`, and this plan).
 - **Conventional-commit style** matching existing history:
   - `chore(stow): add .stowrc and migration plan`
   - `feat(zsh): migrate to stow-managed tree-mirror package`
@@ -536,7 +584,7 @@ git revert <commit-sha>             # undo the repo change
 
 ---
 
-## 17. Risks & open questions
+## 18. Risks & open questions
 
 1. **Secrets in config.** `gh/config.yml` and any tool that stores tokens could leak
    credentials to a public GitHub repo. **Audit each config file before committing.** Move
@@ -566,7 +614,7 @@ git revert <commit-sha>             # undo the repo change
 
 ---
 
-## 18. Quick-reference: the loop
+## 19. Quick-reference: the loop
 
 ```sh
 # Per package, from repo root:
@@ -582,8 +630,8 @@ git push
 
 ---
 
-## 19. Tomorrow's starting point
+## 20. Tomorrow's starting point
 
-1. Phase 0: add `.stowrc`, commit this plan, push.
+1. Phase 0: add `.stowrc`, refresh `.gitignore`, commit this plan, push.
 2. Phase 1: migrate **zsh** per §9, verify, commit, push.
 3. Then proceed through Phase 2 packages, one per commit.

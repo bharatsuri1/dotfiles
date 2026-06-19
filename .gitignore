@@ -1,24 +1,20 @@
-# This .gitignore is appropriate for repositories deployed to GitHub Pages and using
-# a Gemfile as specified at https://github.com/github/pages-gem#conventional
+# macOS
+.DS_Store
 
-# Basic Jekyll gitignores (synchronize to Jekyll.gitignore)
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-
-# Additional Ruby/bundler ignore for when you run: bundle install
-/vendor
-
-# Specific ignore for GitHub Pages
-# GitHub Pages will always use its own deployed version of pages-gem 
-# This means GitHub Pages will NOT use your Gemfile.lock and therefore it is
-# counterproductive to check this file into the repository.
-# Details at https://github.com/github/pages-gem/issues/768
-Gemfile.lock
-
-# Local development files
+# Local scratch / planning
 scratchpad/
 
-# Tmux plugins (managed by TPM)
+# pi-agent workspace (partially tracked via .pi/settings.json; ignore dependencies)
+.pi/npm/node_modules/
+
+# Local machine overrides / secrets
+*.local
+*.local.*
+.envrc.local
+
+# tmux plugins (TPM-managed)
 tmux/plugins/
+
+# nvim runtime (unmanaged, if it ever lands in-repo via adopt)
+nvim/.config/nvim/lazy/
+nvim/.config/nvim/.netrwhist
