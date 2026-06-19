@@ -27,8 +27,8 @@ End state:
 ### 2.1 Repo layout today
 
 The repo uses **flat package dirs** — each top-level dir (e.g. `starship/`, `tmux/`, `k9s/`)
-holds the files that *conceptually* belong in `~/.config/<pkg>/`. There is no `.stowrc`, no
-`docs/`, and no install/bootstrap script. Tracked packages:
+holds the files that *conceptually* belong in `~/.config/<pkg>/`. There is intentionally no
+`.stowrc` yet, and there is no install/bootstrap script. Tracked packages:
 
 ```
 alacritty/  atuin/  bat/  btop/  brew/  claude/  cmux/  cursor/  direnv/
@@ -126,11 +126,16 @@ claude/
   .claude/statusline-command.sh
 ```
 
-Then **every** package is installed with the same command from the repo root:
+Then, after a package has been restructured, **every** package is installed with the same command from the repo root:
 
 ```sh
 stow -t ~ <pkg>      # or just `stow <pkg>` once .stowrc sets --target=$HOME
 ```
+
+> **Safety note:** do **not** run `stow <pkg>` or `stow */` against the current flat package
+> layout. Until a package has been moved to tree-mirror form, Stow would target the wrong
+> locations (for example, linking `starship/starship.toml` to `~/starship.toml` instead of
+> `~/.config/starship.toml`). `.stowrc` is intentionally deferred until migration execution.
 
 **Why this over the current flat style:**
 
@@ -157,7 +162,7 @@ different target per package (`-t ~/.config` for most, `-t ~` for zsh top-level,
    cd ~/Code/personal/dotfiles && git status
    ```
    Commit or stash anything pending first.
-2. **Add `.stowrc`** at repo root so `stow <pkg>` always targets `$HOME`:
+2. **Add `.stowrc` only when starting execution** so `stow <pkg>` always targets `$HOME`:
    ```
    --target=$HOME
    --no-folding        # see §5 note below on folding
@@ -165,7 +170,9 @@ different target per package (`-t ~/.config` for most, `-t ~` for zsh top-level,
    `--no-folding` forces stow to symlink **individual files** rather than whole directories.
    This is critical for `~/.config/zsh/`, `~/.config/tmux/`, `~/.config/atuin/` etc. where
    the live dir also contains unmanaged content (plugins, receipts). With folding, stow
-   would try to replace the whole dir with one symlink and fail/refuse. Commit the `.stowrc`.
+   would try to replace the whole dir with one symlink and fail/refuse. Commit `.stowrc` with
+   the first actual migration commit, not during planning, so nobody accidentally stows the
+   current flat package layout.
 3. **Confirm stow version** ≥ 2.4 (we have 2.4.1 — supports `--adopt`, `--no-folding`).
 4. **Refresh `.gitignore`** for dotfiles usage before migration. Keep `scratchpad/`, runtime
    plugin dirs, `.DS_Store`, pi npm dependencies, and local override files ignored; remove the
@@ -236,7 +243,7 @@ Legend — **Live**: `real`/`symlink`/`absent`. **Target**: where the file must 
 
 | Package | Repo files | Live location | Live | Drift | Target (tree-mirror path) | Gotchas | Priority |
 |---|---|---|---|---|---|---|---|
-| **zsh** | `.zshrc` (stale!), README | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.config/zsh/{completions,plugins}` | real | yes (big) | `zsh/.zshrc`, `.zshenv`, `.zprofile`, `.config/zsh/completions/_cargo,_rustup` | plugins are nested git clones — do NOT track; see §9, §13 | **1** |
+| **zsh** | `.zshrc` (stale!), README | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.config/zsh/{completions,plugins}` | real | yes (big) | `zsh/.zshrc`, `.zshenv`, `.zprofile`, `.config/zsh/completions/_cargo,_rustup` | plugins are nested git clones — do NOT track; see §9, §14 | **1** |
 | starship | `starship.toml` | `~/.config/starship.toml` | real | yes | `starship/.config/starship.toml` | file lives at `~/.config` root, not in a dir — tree-mirror handles it | 2 |
 | git | `ignore` | `~/.config/git/ignore` + `~/.gitconfig` (untracked) | real | yes | `git/.config/git/ignore`, `git/.gitconfig` | decide whether to track `.gitconfig` (contains user.name/email — fine, it's per-user but we want it versioned) | 2 |
 | direnv | `direnv.toml` | `~/.config/direnv/direnv.toml` | real | yes | `direnv/.config/direnv/direnv.toml` | — | 2 |
@@ -265,14 +272,32 @@ Legend — **Live**: `real`/`symlink`/`absent`. **Target**: where the file must 
 | raycast | `extensions.md` (manifest only) | `~/.config/raycast/` (dynamic) | real | n/a | **not a stow target** | repo file is a manifest doc, not a config to symlink | — |
 | brew | `list.txt` (manifest) | n/a | — | n/a | **not a stow target** | manifest only | — |
 
+### 7.1 End-state target map
+
+This is the concise target-state checklist for the configs this repo should eventually cover.
+Manifest-only packages remain tracked but are not stowed.
+
+| Area | Packages | `$HOME` targets |
+|---|---|---|
+| Shell / prompt | `zsh`, `starship` | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.config/zsh/completions/*`, `~/.config/starship.toml` |
+| Terminal / multiplexing | `ghostty`, `alacritty`, `tmux` | `~/.config/ghostty/*`, `~/.config/alacritty/*`, `~/.config/tmux/tmux.conf`, `~/.config/tmux/scripts/*` |
+| Editors | `nvim`, `vscode`, `cursor` | `~/.config/nvim/*`, `~/Library/Application Support/Code/User/*`, `~/Library/Application Support/Cursor/User/*`, plus verified Cursor CLI/commands paths |
+| CLI tools | `git`, `direnv`, `gh`, `gh-dash`, `glow`, `atuin`, `bat`, `sesh`, `cmux`, `television` | `~/.gitconfig`, `~/.config/git/ignore`, and each tool's `~/.config/<tool>/*` path |
+| TUI apps | `k9s`, `lazygit`, `lazydocker`, `btop`, `htop`, `yazi`, `vimium` | each app's `~/.config/<tool>/*` path |
+| App-specific non-XDG | `claude` | `~/.claude/settings.json`, `~/.claude/statusline-command.sh` |
+| Manifests only | `brew`, `raycast` | tracked docs/manifests only; no Stow target |
+
 ---
 
 ## 8. Migration order (phases)
 
-### Phase 0 — setup (one commit)
-- Add `.stowrc` (`--target=$HOME --no-folding`).
-- Add `docs/stow-migration-plan.md` (this file).
-- Commit: `chore(stow): add .stowrc and migration plan`.
+### Phase 0 — setup / first execution commit
+- Keep planning-only commits free of `.stowrc`.
+- When starting the first real migration, add `.stowrc` (`--target=$HOME --no-folding`) in
+  the same commit as the first tree-mirrored package, or in an immediately adjacent setup
+  commit after confirming no one will run Stow against the old flat layout.
+- Commit: `chore(stow): add stow defaults for tree-mirror packages` or include it with
+  `feat(zsh): migrate to stow-managed tree-mirror package`.
 - Push.
 
 ### Phase 1 — zsh (the requested starting point)
@@ -295,7 +320,8 @@ See §11. Only after a clear decision on collapse-vs-submodule.
 ### Phase 6 — cleanup
 - Delete `.zshrc.backup.*`, `.zshenv.backup.*`, `.zprofile.backup.*` from `$HOME`.
 - Delete the pre-stow tarball.
-- Update top-level `README.md` with the bootstrap recipe (`git clone … && stow */`).
+- Update top-level `README.md` with the bootstrap recipe. Use an explicit package list rather
+  than `stow */` so manifests (`brew`, `raycast`) and docs are never accidentally stowed.
 
 ---
 
@@ -516,8 +542,8 @@ future item.
 
 ## 15. `.gitignore` changes
 
-Current `.gitignore` is mostly Jekyll cruft (legacy from a GitHub Pages origin). Clean up and
-make it dotfiles-relevant:
+The repo `.gitignore` has been cleaned up from its old GitHub Pages/Jekyll defaults and should
+stay dotfiles-relevant:
 
 ```gitignore
 # macOS
@@ -545,8 +571,9 @@ nvim/.config/nvim/.netrwhist
 #   (plugins live outside the repo, so nothing to ignore here)
 ```
 
-Remove the stale Jekyll/Gemfile/Pages ignores unless we still use them (we don't). Commit as
-`chore: refresh .gitignore for stow-managed dotfiles`.
+Keep future ignores focused on local scratch files, runtime/generated state, external plugin
+clones, and local override/secrets files. Do not add broad patterns that could hide real config
+changes during migration.
 
 ---
 
@@ -571,9 +598,10 @@ git revert <commit-sha>             # undo the repo change
 ## 17. Commit & push cadence
 
 - **One commit per package** (occasionally one prep commit for a group of trivial repo hygiene,
-  such as `.stowrc`, `.gitignore`, and this plan).
+  such as `.gitignore` and this plan; `.stowrc` should land only when execution starts).
 - **Conventional-commit style** matching existing history:
-  - `chore(stow): add .stowrc and migration plan`
+  - `chore(stow): finalize migration plan`
+  - `chore(stow): add stow defaults for tree-mirror packages`
   - `feat(zsh): migrate to stow-managed tree-mirror package`
   - `chore(git): adopt live .gitconfig and git/ignore into stow package`
   - `fix(tmux): adopt drifted tmux.conf into stow package`
@@ -584,7 +612,35 @@ git revert <commit-sha>             # undo the repo change
 
 ---
 
-## 18. Risks & open questions
+## 18. Future bootstrap shape
+
+Once enough packages have migrated, the top-level `README.md` should contain a reproducible but
+explicit bootstrap flow. Do not use `stow */`; this repo contains manifests, docs, and other
+non-package directories.
+
+Example final shape:
+
+```sh
+git clone https://github.com/bharatsuri1/dotfiles ~/Code/personal/dotfiles
+cd ~/Code/personal/dotfiles
+
+# Optional: install packages from brew/list.txt or a future Brewfile first.
+
+# Stow only packages that have been converted to tree-mirror layout.
+stow zsh starship git direnv ghostty alacritty tmux nvim vscode cursor claude
+```
+
+Bootstrap docs should also list manual/unmanaged setup:
+
+- clone external zsh plugins into `~/.config/zsh/plugins/`
+- install TPM/tmux plugins from inside tmux
+- install Homebrew-managed shell integrations such as `zsh-vi-mode`
+- restore/create local override files such as `~/.zshrc.local` and `~/.gitconfig.local`
+- authenticate CLIs (`gh auth login`, cloud CLIs, app logins) instead of committing tokens
+
+---
+
+## 19. Risks & open questions
 
 1. **Secrets in config.** `gh/config.yml` and any tool that stores tokens could leak
    credentials to a public GitHub repo. **Audit each config file before committing.** Move
@@ -614,7 +670,7 @@ git revert <commit-sha>             # undo the repo change
 
 ---
 
-## 19. Quick-reference: the loop
+## 20. Quick-reference: the loop
 
 ```sh
 # Per package, from repo root:
@@ -630,8 +686,9 @@ git push
 
 ---
 
-## 20. Tomorrow's starting point
+## 21. Starting point for execution
 
-1. Phase 0: add `.stowrc`, refresh `.gitignore`, commit this plan, push.
-2. Phase 1: migrate **zsh** per §9, verify, commit, push.
-3. Then proceed through Phase 2 packages, one per commit.
+1. Confirm clean tree and latest `origin/main`.
+2. Add `.stowrc` only when ready to migrate the first package.
+3. Phase 1: migrate **zsh** per §9, verify, commit, push.
+4. Then proceed through Phase 2 packages, one per commit.
