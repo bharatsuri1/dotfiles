@@ -2,7 +2,12 @@
 .DS_Store
 
 # Local scratch / planning
+.scratchpad/
 scratchpad/
+plans/
+tmp/
+temp/
+
 
 # pi-agent workspace (partially tracked via .pi/settings.json; ignore dependencies)
 .pi/npm/node_modules/
