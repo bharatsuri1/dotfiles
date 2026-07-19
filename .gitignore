@@ -23,3 +23,4 @@ tmux/plugins/
 # nvim runtime (unmanaged, if it ever lands in-repo via adopt)
 nvim/.config/nvim/lazy/
 nvim/.config/nvim/.netrwhist
+nvim.log
