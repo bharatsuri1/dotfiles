@@ -1,0 +1,3 @@
+# Point-in-time output from Homebrew; not an approved installation manifest.
+font-symbols-only-nerd-font
+stats

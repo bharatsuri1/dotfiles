@@ -2,7 +2,7 @@
 
 This is the working source of truth for the new dotfiles setup. It records approved decisions and tracks each component before implementation. Legacy files are reference material only; nothing is carried forward without review.
 
-Repository-wide policy lives in the [setup contract](setup-contract.md). Visual configuration uses the canonical [Vesper palette](vesper-palette.md). macOS implementation progress is tracked in the [Dotfiles macOS Tracker](dotfiles-macos-tracker.md).
+Repository-wide policy lives in the [setup contract](setup-contract.md). Visual configuration uses the canonical [Vesper palette](vesper-palette.md). macOS implementation progress is tracked in the [Dotfiles macOS Tracker](dotfiles-macos-tracker.md). Historical audit evidence and source provenance live under [reference material](reference/).
 
 > [!IMPORTANT]
 > **Theme direction: Vesper.** New and rebuilt configuration should use the Vesper palette consistently. Existing Rose Pine and Catppuccin settings are references, not defaults for the gold setup.

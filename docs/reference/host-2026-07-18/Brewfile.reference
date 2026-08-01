@@ -1,0 +1,137 @@
+# Point-in-time host snapshot; not an approved installation manifest.
+tap "gromgit/brewtils", trusted: true
+tap "olets/tap", trusted: true
+tap "teamookla/speedtest", trusted: true
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Browser automation CLI for AI agents
+brew "agent-browser"
+# Flexible lightweight test report tool
+brew "allure"
+# Programmable completion for Bash 3.2
+brew "bash-completion"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# User-friendly launcher for Bazel
+brew "bazelisk"
+# Resource monitor. C++ version and continuation of bashtop and bpytop
+brew "btop"
+# Load/unload environment variables based on $PWD
+brew "direnv"
+# Modern, maintained replacement for ls
+brew "eza"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream many audio and video codecs
+brew "ffmpeg-full", link: true
+# Terminal JSON viewer
+brew "fx"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Render markdown on the CLI
+brew "glow"
+# Passphrase entry dialog utilizing the Assuan protocol
+brew "pinentry"
+# Tool for glamorous shell scripts
+brew "gum"
+# Fast and powerful log viewer and processor
+brew "hl"
+# Improved top (interactive process viewer)
+brew "htop"
+# User-friendly cURL replacement (command-line HTTP client)
+brew "httpie"
+# Command-line benchmarking tool
+brew "hyperfine"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick-full", link: true
+# Command-line pager for JSON data
+brew "jless"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
+# Lazier way to manage everything docker
+brew "lazydocker"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Cross-platform TUI database management tool
+brew "lazysql"
+# Curses-based tool for viewing and analyzing log files
+brew "lnav"
+# Web based real-time log viewer
+brew "logdy"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Fast, disk space efficient package manager
+brew "pnpm"
+# Tool for managing OCI containers and pods
+brew "podman"
+# Podman Terminal User Interface
+brew "podman-tui"
+# PDF rendering library (based on the xpdf-3.0 code base)
+brew "poppler"
+# SVG rendering tool and library
+brew "resvg"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Smart session manager for the terminal
+brew "sesh"
+# 7-Zip is a file archiver with a high compression ratio
+brew "sevenzip"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Organize software neatly under a single directory tree (e.g. /usr/local)
+brew "stow"
+# General purpose fuzzy finder TUI
+brew "television"
+# Programmatically correct mistyped console commands
+brew "thefuck"
+# Terminal multiplexer
+brew "tmux"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Generator for LS_COLORS with support for multiple color themes
+brew "vivid"
+# Internet file retriever
+brew "wget"
+# Friendly and fast tool for sending HTTP requests
+brew "xh"
+# Blazing fast terminal file manager written in Rust, based on async I/O
+brew "yazi"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# Better and friendly vi(vim) mode plugin for ZSH
+brew "zsh-vi-mode"
+# Interactive TUI for Homebrew
+brew "gromgit/brewtils/taproom"
+# Ookla Speedtest
+brew "teamookla/speedtest/speedtest"
+cask "font-symbols-only-nerd-font"
+# System monitor for the menu bar
+cask "stats"
+vscode "aaron-bond.better-comments"
+vscode "charliermarsh.ruff"
+vscode "davidanson.vscode-markdownlint"
+vscode "docker.docker"
+vscode "esbenp.prettier-vscode"
+vscode "mermaidchart.vscode-mermaid-chart"
+vscode "mikestead.dotenv"
+vscode "ms-azuretools.vscode-containers"
+vscode "ms-azuretools.vscode-docker"
+vscode "ms-python.debugpy"
+vscode "ms-python.python"
+vscode "ms-python.vscode-pylance"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-vscode-remote.remote-containers"
+vscode "mvllow.rose-pine"
+vscode "openai.chatgpt"
+vscode "pomdtr.excalidraw-editor"
+vscode "sst-dev.opencode"
+vscode "tamasfe.even-better-toml"
+vscode "vscodevim.vim"
+cargo "rustlings"
+npm "@earendil-works/pi-coding-agent"
