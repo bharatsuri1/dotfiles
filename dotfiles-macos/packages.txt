@@ -1,0 +1,5 @@
+# Explicit default Stow allowlist. Order is intentional.
+zsh
+fzf
+starship
+vivid

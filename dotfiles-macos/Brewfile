@@ -1,0 +1,9 @@
+# Zsh subsystem dependencies only. Grow this manifest component by component.
+brew "antidote"
+brew "eza"
+brew "fd"
+brew "fzf"
+brew "starship"
+brew "stow"
+brew "vivid"
+brew "zoxide"

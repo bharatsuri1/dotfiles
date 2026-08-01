@@ -1,0 +1,2 @@
+# Managed by dotfiles-macos. Keep system bootstrap minimal and shell-agnostic.
+export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"

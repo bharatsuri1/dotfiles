@@ -1,0 +1,48 @@
+add_newline = false
+command_timeout = 500
+scan_timeout = 30
+palette = "vesper"
+
+format = "$directory$git_branch$git_status$jobs$direnv$line_break$character"
+
+[palettes.vesper]
+background = "#101010"
+foreground = "#FFFFFF"
+accent = "#FFC799"
+success = "#99FFE4"
+error = "#FF8080"
+muted = "#A0A0A0"
+dim = "#7E7E7E"
+
+[directory]
+style = "bold accent"
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+style = "muted"
+symbol = "git:"
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+style = "accent"
+
+[jobs]
+format = "[$symbol$number]($style) "
+style = "accent"
+symbol = "jobs:"
+
+[direnv]
+disabled = false
+format = "[$symbol$loaded]($style) "
+style = "dim"
+symbol = "env:"
+
+[character]
+success_symbol = "[>](bold success)"
+error_symbol = "[>](bold error)"
+vimcmd_symbol = "[<](bold accent)"
+vimcmd_replace_one_symbol = "[<](bold error)"
+vimcmd_replace_symbol = "[<](bold error)"
+vimcmd_visual_symbol = "[<](bold accent)"

@@ -1,0 +1,178 @@
+#!/bin/bash
+
+set -u
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PACKAGES_FILE="$ROOT/packages.txt"
+STOW_DIR="$ROOT/stow"
+DRY_RUN=false
+SELECTED_PACKAGE=""
+
+usage() {
+  cat <<'EOF'
+Usage: setup COMMAND [OPTIONS]
+
+Commands:
+  check       Run non-mutating structure and dependency checks
+  install     Preview the future installation flow
+  restow      Preview relinking reviewed packages
+  uninstall   Preview removing repository-owned links
+  help        Show this help
+
+Options:
+  --dry-run          Required for install, restow, and uninstall during review
+  --package NAME     Limit the operation to one allowlisted Stow package
+  --skip-brew        Omit Homebrew from an installation preview
+  --yes              Reserved for the reviewed mutating installer
+EOF
+}
+
+pass() { printf 'ok    %s\n' "$1"; }
+warn() { printf 'warn  %s\n' "$1"; }
+fail() { printf 'fail  %s\n' "$1" >&2; }
+
+packages() {
+  sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$PACKAGES_FILE"
+}
+
+package_is_allowed() {
+  packages | grep -Fqx -- "$1"
+}
+
+selected_packages() {
+  if [ -n "$SELECTED_PACKAGE" ]; then
+    printf '%s\n' "$SELECTED_PACKAGE"
+  else
+    packages
+  fi
+}
+
+parse_options() {
+  SKIP_BREW=false
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --dry-run) DRY_RUN=true ;;
+      --package)
+        shift
+        [ "$#" -gt 0 ] || { fail '--package requires a name'; exit 2; }
+        SELECTED_PACKAGE=$1
+        ;;
+      --skip-brew) SKIP_BREW=true ;;
+      --yes) : ;;
+      -h|--help) usage; exit 0 ;;
+      *) fail "unknown option: $1"; usage >&2; exit 2 ;;
+    esac
+    shift
+  done
+
+  if [ -n "$SELECTED_PACKAGE" ] && ! package_is_allowed "$SELECTED_PACKAGE"; then
+    fail "package is not allowlisted: $SELECTED_PACKAGE"
+    exit 2
+  fi
+}
+
+check_file() {
+  if [ -f "$1" ]; then
+    pass "${1#$ROOT/}"
+  else
+    fail "missing ${1#$ROOT/}"
+    return 1
+  fi
+}
+
+check_command() {
+  if command -v "$1" >/dev/null 2>&1; then
+    pass "$1 available"
+  else
+    warn "$1 missing (provided by Brewfile)"
+  fi
+}
+
+check_zsh_syntax() {
+  local file failed=0
+  while IFS= read -r file; do
+    if /bin/zsh -n "$file"; then
+      pass "zsh syntax: ${file#$ROOT/}"
+    else
+      fail "zsh syntax: ${file#$ROOT/}"
+      failed=1
+    fi
+  done < <(find "$STOW_DIR/zsh/.config/zsh" -type f \( -name '*.zsh' -o -name '.zshenv' -o -name '.zprofile' -o -name '.zshrc' \) | sort)
+  return "$failed"
+}
+
+run_check() {
+  local failed=0 package
+
+  [ "$(uname -s)" = Darwin ] && pass 'platform is macOS' || { fail 'platform must be macOS'; failed=1; }
+  case "$(uname -m)" in
+    arm64|x86_64) pass "supported architecture: $(uname -m)" ;;
+    *) fail "unsupported architecture: $(uname -m)"; failed=1 ;;
+  esac
+
+  check_file "$ROOT/Brewfile" || failed=1
+  check_file "$PACKAGES_FILE" || failed=1
+  check_file "$ROOT/system/etc/zshenv" || failed=1
+
+  while IFS= read -r package; do
+    if [ -d "$STOW_DIR/$package" ]; then
+      pass "allowlisted package exists: $package"
+    else
+      fail "allowlisted package missing: $package"
+      failed=1
+    fi
+  done < <(selected_packages)
+
+  check_command brew
+  check_command stow
+  check_command antidote
+  check_command eza
+  check_command fd
+  check_command fzf
+  check_command starship
+  check_command vivid
+  check_command zoxide
+
+  check_zsh_syntax || failed=1
+  /bin/bash -n "$ROOT/scripts/prepare-zsh" && pass 'bash syntax: scripts/prepare-zsh' || failed=1
+
+  if [ "$failed" -eq 0 ]; then
+    printf '\nAll repository checks passed. Missing Brewfile tools remain warnings.\n'
+  else
+    printf '\nOne or more repository checks failed.\n' >&2
+  fi
+  return "$failed"
+}
+
+preview() {
+  local command=$1 package
+  [ "$DRY_RUN" = true ] || {
+    fail "$command is intentionally disabled until review; rerun with --dry-run"
+    return 2
+  }
+
+  printf 'Dry-run only; no files will be changed.\n'
+  if [ "$command" = install ]; then
+    [ "$SKIP_BREW" = true ] || printf 'would run: brew bundle --file %s\n' "$ROOT/Brewfile"
+    printf 'would verify: /etc/zshenv matches %s\n' "$ROOT/system/etc/zshenv"
+    printf 'would run: %s\n' "$ROOT/scripts/prepare-zsh"
+  fi
+
+  while IFS= read -r package; do
+    printf 'would %s package: %s\n' "$command" "$package"
+    printf '  stow dir: %s\n' "$STOW_DIR"
+    printf '  target:   %s\n' "$HOME"
+  done < <(selected_packages)
+
+  printf 'Conflict discovery, backup, and mutation are pending the next review gate.\n'
+}
+
+COMMAND=${1:-help}
+[ "$#" -eq 0 ] || shift
+
+case "$COMMAND" in
+  help|-h|--help) usage ;;
+  check) parse_options "$@"; run_check ;;
+  install|restow|uninstall) parse_options "$@"; preview "$COMMAND" ;;
+  *) fail "unknown command: $COMMAND"; usage >&2; exit 2 ;;
+esac

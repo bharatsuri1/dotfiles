@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Generate reproducible shell integration files outside Git. This script is
+# intentionally explicit because Antidote may access the network while cloning
+# plugins. Shell startup itself only sources the resulting static bundle.
+
+set -eu
+
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+ZDOTDIR=${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}
+CACHE_DIR="$XDG_CACHE_HOME/zsh"
+ANTIDOTE_HOME=${ANTIDOTE_HOME:-$XDG_CACHE_HOME/antidote}
+
+mkdir -p "$CACHE_DIR" "$ANTIDOTE_HOME"
+
+atomic_generate() {
+  destination=$1
+  shift
+  temporary="${destination}.tmp.$$"
+  trap 'rm -f "$temporary"' EXIT HUP INT TERM
+  "$@" > "$temporary"
+  mv "$temporary" "$destination"
+  trap - EXIT HUP INT TERM
+}
+
+for command in antidote fzf starship vivid zoxide; do
+  command -v "$command" >/dev/null 2>&1 || {
+    printf 'prepare-zsh: missing required command: %s\n' "$command" >&2
+    exit 1
+  }
+done
+
+export ANTIDOTE_HOME
+
+generate_antidote_bundle() {
+  antidote bundle < "$ZDOTDIR/.zsh_plugins.txt"
+}
+
+atomic_generate "$CACHE_DIR/plugins.zsh" generate_antidote_bundle
+atomic_generate "$CACHE_DIR/fzf.zsh" fzf --zsh
+atomic_generate "$CACHE_DIR/starship.zsh" starship init zsh
+atomic_generate "$CACHE_DIR/zoxide.zsh" zoxide init zsh
+
+ls_colors=$(vivid generate vesper)
+temporary="$CACHE_DIR/ls-colors.zsh.tmp.$$"
+trap 'rm -f "$temporary"' EXIT HUP INT TERM
+printf "export LS_COLORS='%s'\n" "$ls_colors" > "$temporary"
+mv "$temporary" "$CACHE_DIR/ls-colors.zsh"
+trap - EXIT HUP INT TERM
+
+printf 'Prepared Zsh integrations in %s\n' "$CACHE_DIR"

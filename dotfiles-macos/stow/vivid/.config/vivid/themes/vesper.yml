@@ -1,0 +1,101 @@
+colors:
+  background: '101010'
+  foreground: 'ffffff'
+  accent: 'ffc799'
+  success: '99ffe4'
+  error: 'ff8080'
+  orange: 'ff7300'
+  muted: 'a0a0a0'
+  dim: '7e7e7e'
+
+core:
+  normal_text:
+    foreground: foreground
+  regular_file: {}
+  reset_to_normal: {}
+  directory:
+    foreground: accent
+    font-style: bold
+  symlink:
+    foreground: success
+  multi_hard_link:
+    foreground: success
+  fifo:
+    foreground: background
+    background: accent
+  socket:
+    foreground: background
+    background: success
+  door:
+    foreground: background
+    background: success
+  block_device:
+    foreground: background
+    background: orange
+  character_device:
+    foreground: background
+    background: orange
+  broken_symlink:
+    foreground: error
+  missing_symlink_target:
+    foreground: error
+  setuid:
+    foreground: background
+    background: error
+  setgid:
+    foreground: background
+    background: accent
+  file_with_capability:
+    foreground: background
+    background: success
+  sticky_other_writable:
+    foreground: background
+    background: success
+  other_writable:
+    foreground: success
+  sticky:
+    foreground: accent
+  executable_file:
+    foreground: success
+    font-style: bold
+
+text:
+  special:
+    foreground: accent
+  todo:
+    foreground: accent
+    font-style: bold
+  licenses:
+    foreground: dim
+  configuration:
+    foreground: accent
+  other:
+    foreground: muted
+
+markup:
+  foreground: accent
+
+programming:
+  source:
+    foreground: success
+  tooling:
+    foreground: muted
+  continuous-integration:
+    foreground: success
+
+media:
+  foreground: orange
+
+office:
+  foreground: accent
+
+archives:
+  foreground: accent
+  font-style: underline
+
+executable:
+  foreground: success
+  font-style: bold
+
+unimportant:
+  foreground: dim

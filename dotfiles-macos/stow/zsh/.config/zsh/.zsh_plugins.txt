@@ -1,0 +1,4 @@
+# Ordering matters: keymap owner first; syntax highlighting last.
+jeffreytse/zsh-vi-mode
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting

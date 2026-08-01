@@ -1,0 +1,7 @@
+--color=bg:#101010,bg+:#232323,fg:#A0A0A0,fg+:#FFFFFF
+--color=border:#343434,header:#FFC799,hl:#FFC799,hl+:#FFCFA8
+--color=info:#7E7E7E,marker:#99FFE4,pointer:#FFC799,prompt:#FFFFFF
+--info=inline
+--marker=*
+--pointer=>
+--prompt=>
