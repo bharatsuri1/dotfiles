@@ -7,7 +7,7 @@ This tracker governs the implementation of the turnkey macOS setup under `dotfil
 
 ## Status
 
-- Current phase: **Zsh implementation review**
+- Current phase: **macOS experience review; Zsh deployment remains paused**
 - Checkpoint before implementation: `131928b`
 - Platform directory: `dotfiles-macos/` created; live deployment disabled
 - First configuration package: Zsh
@@ -127,6 +127,42 @@ A component does not need a Stow package merely because it is listed. Its approv
 ## Component queue
 
 Status legend: `active`, `pending`, `optional`, `provisional`, or `omit candidate`. Final disposition is confirmed at the component's decision gate.
+
+### macOS experience and system baseline
+
+These areas are reviewed in order. Each decision should capture the desired
+experience, whether it is safely scriptable, its reversal path, and a concrete
+verification step. We will commit one approved area at a time.
+
+| Order | Area | Expected treatment | Status |
+|---:|---|---|---|
+| 1 | System baseline, identity, locale and time | Document supported macOS/architecture assumptions; script only non-sensitive stable settings | **active discussion** |
+| 2 | Appearance | Review light/dark mode, accent, contrast, scroll bars and visual-motion preferences | pending |
+| 3 | Keyboard | Review key repeat, initial delay, function-key behavior, shortcuts and input sources | pending |
+| 4 | Text input | Review autocorrect, capitalization, smart quotes/dashes, spelling and substitutions | pending |
+| 5 | Trackpad and mouse | Review tracking speed, tap/click, gestures, secondary click and scrolling | pending |
+| 6 | Dock | Review size, magnification, auto-hide, recent apps, indicators and position | pending |
+| 7 | Mission Control, Spaces and windows | Review Spaces behavior, window tiling, Stage Manager and desktop-reveal behavior | pending |
+| 8 | Finder and Desktop | Review view defaults, path/status bars, extensions, search scope, hidden files and desktop items | pending |
+| 9 | Menu bar and Control Center | Review clock, battery, control visibility and menu-bar organization | pending |
+| 10 | Screenshots and screen recording | Review destination, format, naming, shadows and capture workflow | pending |
+| 11 | Displays, sound and power | Document preferred behavior; keep hardware-specific layouts and device choices manual | pending |
+| 12 | Default applications and file associations | Record intentional defaults and use idempotent tooling only where reliable | pending |
+| 13 | Notifications and Focus | Document desired policy; prefer manual configuration where identifiers are unstable | pending |
+| 14 | Login items and background services | Track an explicit reviewed list; do not copy opaque application state | pending |
+| 15 | Privacy, security and accessibility approvals | Manual handoff for TCC, FileVault, Touch ID, extensions and privileged approvals | pending |
+| 16 | Software updates and maintenance | Review automatic-update policy and document safe maintenance expectations | pending |
+
+Review rules:
+
+- Define the desired new-machine behavior rather than cloning every current value.
+- Inspect the current host only as reference evidence.
+- Classify each decision as scripted, documented manual step, or intentionally omitted.
+- For scripted defaults, record the domain, key, value, reversal and verification.
+- Do not automate credentials, iCloud enrollment, FileVault recovery material or
+  macOS privacy-database modifications.
+- Prefer supported UI configuration when a private or unstable defaults key would
+  make the setup brittle.
 
 ### Shell and terminal foundation
 
@@ -307,6 +343,7 @@ Status legend: `active`, `pending`, `optional`, `provisional`, or `omit candidat
 - [ ] Repeat the decision-to-review delivery model for every retained component.
 - [ ] Grow the Brewfile only as approved components require dependencies.
 - [ ] Grow `packages.txt` only as reviewed Stow packages are completed.
+- [ ] Complete the macOS experience review queue one approved area at a time.
 - [ ] Add approved macOS defaults with reversible documentation.
 - [ ] Implement the final doctor and handoff report.
 - [ ] Document authentication, licenses, security approvals and manual imports.
